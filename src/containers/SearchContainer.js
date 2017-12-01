@@ -1,28 +1,41 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import './../App.css'
-import { search } from './../BooksAPI'
-import { updateShelvesState } from '../utils/utils'
-import Book from '../components/Book'
-import { getAll } from '../BooksAPI'
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { DebounceInput } from "react-debounce-input";
+import "./../App.css";
+import { search } from "./../BooksAPI";
+import { updateShelvesState } from "../utils/utils";
+import Book from "../components/Book";
+import { getAll, update } from "../BooksAPI";
 
 class SearchContainer extends Component {
   state = {
-    search: '',
+    search: "",
     booksSearchResult: []
-  }
+  };
 
   onChangeSearch = event => {
-    this.setState({ search: event.target.value })
-    search(event.target.value, 10)
-    .then(booksSearchResult => {
-      this.setState({ booksSearchResult })
-      console.log(booksSearchResult)
-    })
+    search(event.target.value.trim(), 1)
+      .then(booksSearchResult => {
+        if (booksSearchResult && booksSearchResult.length) {
+          this.setState({ booksSearchResult });
+          console.log(booksSearchResult);
+        } else {
+          this.setState({ booksSearchResult: [] });
+          console.log(booksSearchResult);
+        }
+      })
+      .catch(error => `deu o seguinte ruim, ${error}`);
+  }
+
+  onChangeShelf = (book, shelf) => {
+    update(book, shelf)
+      .then(getAll)
+      .then(data => updateShelvesState(data))
+      .catch(error => console.log(error))
   }
 
   render() {
-    const { booksSearchResult } = this.state
+    const { booksSearchResult } = this.state;
 
     return (
       <div className="search-books">
@@ -30,23 +43,25 @@ class SearchContainer extends Component {
           <Link className="close-search" to="/">
             Close
           </Link>
+
           <div className="search-books-input-wrapper">
-            <input
-              onChange={this.onChangeSearch}
+            <DebounceInput
               type="text"
+              minLength={2}
+              debounceTimeout={500}
+              onChange={this.onChangeSearch}
               placeholder="Search by title or author"
-              value={this.state.search}
             />
           </div>
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {booksSearchResult.map(item => <Book key={item.id} book={item} />)}
+            {booksSearchResult.map(item => <Book key={item.id} book={item} onChangeShelf={this.onChangeShelf} />)}
           </ol>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default SearchContainer
+export default SearchContainer;

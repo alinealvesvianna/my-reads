@@ -11,9 +11,4 @@ export function updateShelvesState(books) {
     return shelves
   }
 
-//   export const onChangeShelf = (book, shelf) => {
-//     update(book, shelf)
-//       .then(getAll)
-//       .then(data => this.updateShelvesState(data))
-//       .catch(error => console.log(error))
-//   }
+  
