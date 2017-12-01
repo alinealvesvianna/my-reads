@@ -23,9 +23,7 @@ export const get = bookId =>
 export const getAll = () => 
 fetch(`${api}/books`, { headers })
   .then(checkStatus)
-  .then(data => {
-    return data.books;
-  })
+  .then(data => data.books)
   .catch(error => {
     throw error
   })
@@ -41,7 +39,6 @@ export const update = (book, shelf) =>
   })
   .then(checkStatus)
   .then(data => data)
-//   .then(res => res.json())
   .catch(error => {
     throw error
   })
@@ -55,5 +52,8 @@ export const search = (query, maxResults) =>
     },
     body: JSON.stringify({ query, maxResults })
   })
-    .then(res => res.json())
-    .then(data => data.books);
+    .then(checkStatus)
+    .then(data => data.books)
+    .catch(error => {
+        throw error
+      })

@@ -12,10 +12,8 @@ export function updateShelvesState(books) {
 }
 
 export const checkStatus = response => {
-  if (
-    (response.status >= 400 && response.status <= 402) ||
-    (response.status >= 405 && response.status <= 451)
-  ) {
+    debugger
+  if ((response.status >= 400 && response.status <= 402) || (response.status >= 405 && response.status <= 451)) {
     throw Error("deu um ruim foda ae de 400");
   }
 
@@ -25,6 +23,10 @@ export const checkStatus = response => {
 
   if (response.status === 404) {
     throw Error("deu ruim de not found");
+  }
+
+  if ((response.status >= 500)) {
+    throw Error("deu um ruim de servidor 500");
   }
 
   return response.json();

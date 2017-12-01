@@ -5,43 +5,45 @@ import { getAll, update } from "../BooksAPI";
 import Book from "./../components/Book";
 import { updateShelvesState } from "../utils/utils";
 import Load from "../components/Load";
-import ErroMessage from "../components/ErroMessage";
+import Message from '../components/Message';
+
 
 class BookContainer extends Component {
   state = {
     shelves: [],
     isLoading: true,
-    isLocalLoading: {handleLoading:false, local:null},
+    isLocalLoading: { handleLoading: false, local: null },
     isError: { handleError: false, message: null }
   };
 
   componentDidMount() {
+      debugger
     getAll()
       .then(books => {
         return updateShelvesState(books);
       })
-      .then(data => {this.setState({ shelves: data, isLoading: false }) 
-      console.log(data)})
+      .then(data => 
+        this.setState({ shelves: data, isLoading: false }))
       .catch(error => {
         this.setState({
           isLoading: false,
           isError: { handleError: true, message: error.message }
-        })
-      })
+        });
+      });
   }
 
   onChangeShelf = (book, shelf) => {
-    this.setState({ isLocalLoading: {handleLoading:true, local:shelf} });
+    this.setState({ isLocalLoading: { handleLoading: true, local: shelf } });
     update(book, shelf)
       .then(getAll)
       .then(data => updateShelvesState(data))
       .then(shelves => this.setState({ shelves, isLocalLoading: false }))
       .catch(error => {
         this.setState({
-          isLocalLoading: {handleLoading:false},
+          isLocalLoading: { handleLoading: false },
           isError: { handleError: true, message: error.message }
-        })
-      })
+        });
+      });
   };
 
   render() {
@@ -49,7 +51,7 @@ class BookContainer extends Component {
     return (
       <div className="app">
         {isLoading && <Load />}
-        {isError.handleError && (<ErroMessage errorMsg={isError.message} />)}
+        {isError.handleError && <Message message={isError.message} />}
         <div className="list-books">
           <div className="list-books-title">
             <h1>MyReads</h1>
@@ -61,9 +63,10 @@ class BookContainer extends Component {
                   <div key={index} className="bookshelf">
                     <h2 className="bookshelf-title">{shelf.group}</h2>
                     <div className="bookshelf-books">
-                      {(isLocalLoading.handleLoading && isLocalLoading.local === shelf.items[0].shelf) && (
-                        <Load isLocalLoading={isLocalLoading} />
-                      )}
+                      {isLocalLoading.handleLoading &&
+                        isLocalLoading.local === shelf.items[0].shelf && (
+                          <Load isLocalLoading={isLocalLoading} />
+                        )}
                       {shelf.items.length > 0 && (
                         <ol className="books-grid">
                           {shelf.items.map(item => (
