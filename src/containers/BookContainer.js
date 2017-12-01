@@ -16,7 +16,6 @@ class BookContainer extends Component {
   }
 
   componentDidMount() {
-    debugger
     getAll()
       .then(books => {
         return updateShelvesState(books)

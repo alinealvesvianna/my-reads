@@ -31,7 +31,6 @@ export const checkStatus = response => {
   }
 
   if (response.status >= 500) {
-    debugger
     throw Error(`Ops... Tivemos algum problema no servidor. Tente novamente mais tarde. 
     > Resposta da requisição: ${response.statusText}`)
   }
