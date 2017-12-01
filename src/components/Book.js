@@ -1,14 +1,13 @@
-import React, { Component } from "react"
-import PropTypes from "prop-types"
-import { update, get } from "./../BooksAPI"
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 class Book extends Component {
   state = {
     optionsValue: [
-      { value: "currentlyReading", name: "Currently Reading" },
-      { value: "wantToRead", name: "Want to Read" },
-      { value: "read", name: "Read" },
-      { value: "none", name: "none" }
+      { value: 'currentlyReading', name: 'Currently Reading' },
+      { value: 'wantToRead', name: 'Want to Read' },
+      { value: 'read', name: 'Read' },
+      { value: 'none', name: 'none' }
     ]
   }
 
@@ -22,10 +21,10 @@ class Book extends Component {
 
     return (
       <li>
-        <div className="book">
-          <div className="book-top">
+        <div className='book'>
+          <div className='book-top'>
             <div
-              className="book-cover"
+              className='book-cover'
               style={{
                 width: 128,
                 height: 193,
@@ -33,10 +32,8 @@ class Book extends Component {
               }}
             />
             <div className="book-shelf-changer">
-              <select value={book.shelf} onChange={this.handleChange}>
-                <option value="none" disabled>
-                  Move to...
-                </option>
+              <select value={book.shelf ? (book.shelf) : ('none') } onChange={this.handleChange}>
+                <option disabled>Move to...</option>
                 {optionsValue.map((option, index) => (
                   <option key={index} value={option.value}>
                     {option.name}
@@ -46,7 +43,12 @@ class Book extends Component {
             </div>
           </div>
           <div className="book-title">{book.title}</div>
-          <div className="book-authors">{book.authors}</div>
+          {book.authors &&
+            book.authors.map((author, index) => (
+              <div key={index} className="book-authors">
+                {author}
+              </div>
+            ))}
         </div>
       </li>
     )

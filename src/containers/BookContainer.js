@@ -3,6 +3,7 @@ import "./../App.css"
 import { Link } from "react-router-dom"
 import { getAll, update } from "../BooksAPI"
 import Book from "./../components/Book"
+import {updateShelvesState} from '../utils/utils'
 
 class BookContainer extends Component {
   state = {
@@ -11,27 +12,18 @@ class BookContainer extends Component {
 
   componentDidMount() {
     getAll()
-      .then(books => this.updateShelvesState(books))
-      .catch(error => console.log(error))
-  }
-
-  updateShelvesState(books) {
-    const booksGroupByShelf = books.reduce((newObj, book) => {
-      newObj[book.shelf] = newObj[book.shelf] || []
-      newObj[book.shelf].push(book)
-      return newObj
-    }, {})
-
-    const shelves = Object.keys(booksGroupByShelf).map(key => {
-      return { group: key, items: booksGroupByShelf[key] }
+      .then(books => updateShelvesState(books))
+      .then(shelves => {this.setState({shelves})
+        console.log(this.state.shelves[0].items)
     })
-    this.setState({ shelves })
+      .catch(error => console.log(error))
   }
 
   onChangeShelf = (book, shelf) => {
     update(book, shelf)
       .then(getAll)
-      .then(data => this.updateShelvesState(data))
+      .then(data => updateShelvesState(data))
+      .then(shelves => this.setState({shelves}))
       .catch(error => console.log(error))
   }
 
