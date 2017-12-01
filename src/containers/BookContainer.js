@@ -23,6 +23,7 @@ class BookContainer extends Component {
       this.setState({ shelves })
       console.log(this.state.shelves)
     })
+    .catch(error => (console.log(error)))
   }
 
   render() {
