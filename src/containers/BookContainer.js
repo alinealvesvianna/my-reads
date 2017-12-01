@@ -17,9 +17,7 @@ class BookContainer extends Component {
 
   componentDidMount() {
     getAll()
-      .then(books => {
-        return updateShelvesState(books)
-      })
+      .then(books => updateShelvesState(books))
       .then(data => this.setState({ shelves: data, isLoading: false }))
       .catch(error => {
         this.setState({
@@ -46,6 +44,7 @@ class BookContainer extends Component {
 
   render() {
     const { shelves, isLoading, isLocalLoading, isError } = this.state
+
     return (
       <div className="app">
         {isLoading && <Load />}
@@ -65,9 +64,9 @@ class BookContainer extends Component {
                     <div className="bookshelf-books">
                       {isLocalLoading.handleLoading &&
                         isLocalLoading.local === shelf.items[0].shelf && (
-                          <Load isLocalLoading={isLocalLoading} />
+                          <Load isLocalLoading={isLocalLoading.handleLoading} />
                         )}
-                      {shelf.items.length > 0 && (
+                      {shelf.items ? (
                         <ol className="books-grid">
                           {shelf.items.map(item => (
                             <Book
@@ -77,6 +76,8 @@ class BookContainer extends Component {
                             />
                           ))}
                         </ol>
+                      ) : (
+                        <WarningMessage warning={'No books in this shelf'} />
                       )}
                     </div>
                   </div>

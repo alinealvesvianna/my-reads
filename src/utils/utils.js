@@ -1,13 +1,30 @@
 export function updateShelvesState(books) {
+    
+  const shelvesLibrary = ['wantToRead', 'read', 'currentlyReading']
+
   const booksGroupByShelf = books.reduce((newObj, book) => {
     newObj[book.shelf] = newObj[book.shelf] || []
     newObj[book.shelf].push(book)
     return newObj
   }, {})
 
-  const shelves = Object.keys(booksGroupByShelf).map(key => {
-    return { group: key, items: booksGroupByShelf[key] }
+  const booksGroupByShelfKeys = Object.keys(booksGroupByShelf)
+
+  const findEmptyShelf = shelvesLibrary.map((shelf, index) => {
+    if (booksGroupByShelfKeys.indexOf(shelf) === -1) {
+      return shelf
+    }
   })
+
+  const shelves = booksGroupByShelfKeys.map(key => ({
+    group: key,
+    items: booksGroupByShelf[key]
+  }))
+
+  if (shelves.length < 3) {
+    shelves.push({ group: findEmptyShelf.join('')})
+  }
+
   return shelves
 }
 

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { DebounceInput } from 'react-debounce-input'
 import './../App.css'
 import { search } from './../BooksAPI'
-import { updateShelvesState } from '../utils/utils'
 import Book from '../components/Book'
 import { getAll, update } from '../BooksAPI'
 import WarningMessage from '../components/WarningMessage'
@@ -13,7 +12,19 @@ class SearchContainer extends Component {
   state = {
     booksSearchResult: [],
     isLoading: false,
-    warning: { handleError: false, message: null, isSuccess: false }
+    warning: { handleError: false, message: null, isSuccess: false },
+    booksOnShelfs: []
+  }
+
+  componentDidMount() {
+    getAll()
+      .then(booksOnShelfs => this.setState({ booksOnShelfs }))
+      .catch(error =>
+        this.setState({
+          isLoading: false,
+          warning: { handleError: true, message: error.message }
+        })
+      )
   }
 
   onChangeSearch = event => {
@@ -21,10 +32,15 @@ class SearchContainer extends Component {
       isLoading: true,
       warning: { handleError: false, message: null, isSuccess: false }
     })
+
     search(event.target.value.trim(), 1)
       .then(booksSearchResult => {
         if (!booksSearchResult.error) {
-          this.setState({ booksSearchResult, isLoading: false })
+          const filter = this.filterResultShelf(booksSearchResult)
+          return this.setState({
+            booksSearchResult: filter,
+            isLoading: false
+          })
         } else {
           this.setState({
             booksSearchResult: [],
@@ -44,24 +60,40 @@ class SearchContainer extends Component {
       )
   }
 
+  filterResultShelf(booksSearch) {
+    const { booksOnShelfs } = this.state
+
+    const filterSearchResults = booksSearch.map(bookSearch => {
+      const bookToUpdate = booksOnShelfs.filter(bookOnShelf => bookSearch.id === bookOnShelf.id)
+      return bookToUpdate[0] ? bookToUpdate[0] : bookSearch
+    })
+
+    return filterSearchResults
+  }
+
   onChangeShelf = (book, shelf) => {
+    const { booksSearchResult } = this.state
+
     this.setState({
       isLoading: true,
       warning: { handleError: false, message: null, isSuccess: false }
     })
+
     update(book, shelf)
       .then(getAll)
-      .then(data => {
-        updateShelvesState(data)
+      .then(booksOnShelfs => this.setState({booksOnShelfs}))
+      .then(() => this.filterResultShelf(booksSearchResult))
+      .then(booksSearchResult =>
         this.setState({
           isLoading: false,
+          booksSearchResult,
           warning: {
             handleError: true,
             message: `esse livro foi movido para a pratileira ${shelf} com sucesso!`,
             isSuccess: true
           }
         })
-      })
+      )
       .catch(error =>
         this.setState({
           isLoading: false,

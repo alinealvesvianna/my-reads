@@ -16,7 +16,7 @@ Load.defaultProps = {
   isLocalLoading: false
 }
 
-Load.protoType = {
+Load.propTypes = {
   isLocalLoading: PropTypes.bool
 }
 

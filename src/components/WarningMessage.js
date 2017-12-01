@@ -18,8 +18,8 @@ WarningMessage.defaultProps = {
   warningIsSuccess: false
 }
 
-WarningMessage.protoType = {
-  warning: PropTypes.object,
+WarningMessage.propTypes = {
+  warning: PropTypes.string,
   warningIsSuccess: PropTypes.bool
 }
 
