@@ -11,6 +11,10 @@ class Book extends Component {
     ]
   }
 
+  static protoType = {
+    book: PropTypes.object
+  }
+
   handleChange = event => {
     this.props.onChangeShelf(this.props.book, event.target.value)
   }
@@ -21,10 +25,10 @@ class Book extends Component {
 
     return (
       <li>
-        <div className='book'>
-          <div className='book-top'>
+        <div className="book">
+          <div className="book-top">
             <div
-              className='book-cover'
+              className="book-cover"
               style={{
                 width: 128,
                 height: 193,
@@ -32,7 +36,10 @@ class Book extends Component {
               }}
             />
             <div className="book-shelf-changer">
-              <select value={book.shelf ? (book.shelf) : ('none') } onChange={this.handleChange}>
+              <select
+                value={book.shelf ? book.shelf : 'none'}
+                onChange={this.handleChange}
+              >
                 <option disabled>Move to...</option>
                 {optionsValue.map((option, index) => (
                   <option key={index} value={option.value}>
@@ -53,10 +60,6 @@ class Book extends Component {
       </li>
     )
   }
-}
-
-Book.protoType = {
-  book: PropTypes.object
 }
 
 export default Book

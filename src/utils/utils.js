@@ -1,33 +1,40 @@
 export function updateShelvesState(books) {
   const booksGroupByShelf = books.reduce((newObj, book) => {
-    newObj[book.shelf] = newObj[book.shelf] || [];
-    newObj[book.shelf].push(book);
-    return newObj;
-  }, {});
+    newObj[book.shelf] = newObj[book.shelf] || []
+    newObj[book.shelf].push(book)
+    return newObj
+  }, {})
 
   const shelves = Object.keys(booksGroupByShelf).map(key => {
-    return { group: key, items: booksGroupByShelf[key] };
-  });
-  return shelves;
+    return { group: key, items: booksGroupByShelf[key] }
+  })
+  return shelves
 }
 
 export const checkStatus = response => {
-    debugger
-  if ((response.status >= 400 && response.status <= 402) || (response.status >= 405 && response.status <= 451)) {
-    throw Error("deu um ruim foda ae de 400");
+  if (
+    (response.status >= 400 && response.status <= 402) ||
+    (response.status >= 405 && response.status <= 499)
+  ) {
+    throw Error(`Ops...Teve algum erro na requisição. 
+    > Resposta da requisição: ${response.statusText}`)
   }
 
   if (response.status === 403) {
-    throw Error("deu um ruim de forbbiden");
+    throw Error(`Ops... A requisição não foi permitida. 
+    > Resposta da requisição: ${response.statusText}`)
   }
 
   if (response.status === 404) {
-    throw Error("deu ruim de not found");
+    throw Error(`Ops... Sua conexão com a internet teve algum problema. 
+    > Resposta da requisição: ${response.statusText}`)
   }
 
-  if ((response.status >= 500)) {
-    throw Error("deu um ruim de servidor 500");
+  if (response.status >= 500) {
+    debugger
+    throw Error(`Ops... Tivemos algum problema no servidor. Tente novamente mais tarde. 
+    > Resposta da requisição: ${response.statusText}`)
   }
 
-  return response.json();
-};
+  return response.json()
+}
