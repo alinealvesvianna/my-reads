@@ -14,9 +14,10 @@ class SearchContainer extends Component {
   };
 
   onChangeSearch = event => {
+      debugger
     search(event.target.value.trim(), 1)
       .then(booksSearchResult => {
-        if (booksSearchResult && booksSearchResult.length) {
+        if (!booksSearchResult.error) {
           this.setState({ booksSearchResult });
           console.log(booksSearchResult);
         } else {
