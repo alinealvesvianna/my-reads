@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import "./../App.css"
 import { Link } from "react-router-dom"
-import { getAll } from "../BooksAPI"
+import { getAll, update } from "../BooksAPI"
 import Book from "./../components/Book"
 
 class BookContainer extends Component {
@@ -10,20 +10,29 @@ class BookContainer extends Component {
   }
 
   componentDidMount() {
-    getAll().then(books => {
-      const booksGroupByShelf = books.reduce((newObj, book) => {
-        newObj[book.shelf] = newObj[book.shelf] || []
-        newObj[book.shelf].push(book)
-        return newObj
-      }, {})
+    getAll()
+      .then(books => this.updateShelvesState(books))
+      .catch(error => console.log(error))
+  }
 
-      const shelves = Object.keys(booksGroupByShelf).map(key => {
-        return { group: key, items: booksGroupByShelf[key] }
-      })
-      this.setState({ shelves })
-      console.log(this.state.shelves)
+  updateShelvesState(books) {
+    const booksGroupByShelf = books.reduce((newObj, book) => {
+      newObj[book.shelf] = newObj[book.shelf] || []
+      newObj[book.shelf].push(book)
+      return newObj
+    }, {})
+
+    const shelves = Object.keys(booksGroupByShelf).map(key => {
+      return { group: key, items: booksGroupByShelf[key] }
     })
-    .catch(error => (console.log(error)))
+    this.setState({ shelves })
+  }
+
+  onChangeShelf = (book, shelf) => {
+    update(book, shelf)
+      .then(getAll)
+      .then(data => this.updateShelvesState(data))
+      .catch(error => console.log(error))
   }
 
   render() {
@@ -45,7 +54,11 @@ class BookContainer extends Component {
                       {shelf.items.length > 0 && (
                         <ol className="books-grid">
                           {shelf.items.map(item => (
-                            <Book key={item.id} book={item} />
+                            <Book
+                              key={item.id}
+                              book={item}
+                              onChangeShelf={this.onChangeShelf}
+                            />
                           ))}
                         </ol>
                       )}

@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { update } from "./../BooksAPI";
+import React, { Component } from "react"
+import PropTypes from "prop-types"
+import { update, get } from "./../BooksAPI"
 
 class Book extends Component {
   state = {
@@ -10,16 +10,15 @@ class Book extends Component {
       { value: "read", name: "Read" },
       { value: "none", name: "none" }
     ]
-  };
+  }
 
   handleChange = event => {
-    // console.log(event.target.state);
-
-  };
+    this.props.onChangeShelf(this.props.book, event.target.value)
+  }
 
   render() {
-    const { optionsValue } = this.state;
-    const { book } = this.props;
+    const { optionsValue } = this.state
+    const { book } = this.props
 
     return (
       <li>
@@ -50,12 +49,12 @@ class Book extends Component {
           <div className="book-authors">{book.authors}</div>
         </div>
       </li>
-    );
+    )
   }
 }
 
 Book.protoType = {
   book: PropTypes.object
-};
+}
 
-export default Book;
+export default Book
