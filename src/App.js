@@ -2,9 +2,6 @@ import React, {Component} from "react";
 import {Route} from 'react-router-dom'
 import BookContainer from './containers/BookContainer'
 import SearchContainer from './containers/SearchContainer'
-import {search} from './BooksAPI';
-
-// import * as BooksAPI from './BooksAPI' import './App.cs'
 
 class BooksApp extends Component {
     render() {
